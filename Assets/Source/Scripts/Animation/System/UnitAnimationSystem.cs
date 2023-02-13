@@ -26,14 +26,14 @@ public sealed class UnitAnimationSystem : UpdateSystem
 
             if (state == animator.CurrentState) continue;
 
-            animator.Animator.SetInteger("Action", state.GetHashCode());
+            animator.Animator.Play(state.ToString());
             animator.CurrentState = state;
 
             item.RemoveComponent<AnimTriggerComponent>();
-            if (state != UnitAnimationState.Idle)
+            if (state != UnitAnimationState.StandingIdle)
                 item.SetComponent(new AnimTriggerComponent()
                 {
-                    State = UnitAnimationState.Idle,
+                    State = UnitAnimationState.StandingIdle,
                 });
         }
     }

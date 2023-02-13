@@ -58,7 +58,7 @@ public sealed class FightSystem : UpdateSystem
                 fightComponent.Unit.SetComponent(new ActiveHitComponent());
                 fightComponent.Unit.SetComponent(new AnimTriggerComponent()
                 {
-                    State = UnitAnimationState.Attack
+                    State = UnitAnimationState.StandingMeleeAttackDownward
                 });
 
                 unitBattleComponent.UnitRB.velocity = Vector3.zero;

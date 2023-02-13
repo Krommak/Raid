@@ -1,6 +1,7 @@
 using Scellecs.Morpeh;
 using UnityEngine;
 using Unity.IL2CPP.CompilerServices;
+using CodeWriter.MeshAnimation;
 
 [System.Serializable]
 [Il2CppSetOption(Option.NullChecks, false)]
@@ -9,6 +10,6 @@ using Unity.IL2CPP.CompilerServices;
 public struct UnitAnimatorComponent : IComponent
 {
     [SerializeField]
-    public Animator Animator;
+    public MeshAnimator Animator;
     internal UnitAnimationState CurrentState;
 }
