@@ -1,9 +1,9 @@
 public enum UnitAnimationState
 {
-    Idle,
-    Walk,
-    Charge,
-    Attack,
+    StandingIdle,
+    StandingMeleeAttackDownward,
+    StandingRunForward,
+    UnarmedRunForward,
 }
 public enum PlatformType
 {

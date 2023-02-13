@@ -26,7 +26,7 @@ public sealed class UnitMovementSystem : UpdateSystem
 
             item.SetComponent(new AnimTriggerComponent()
             {
-                State = UnitAnimationState.Charge,
+                State = UnitAnimationState.StandingRunForward,
             });
         }
     }
