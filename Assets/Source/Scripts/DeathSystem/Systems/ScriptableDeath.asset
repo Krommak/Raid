@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa0bd0627c0f7b846bf2707259f32566, type: 3}
+  m_Name: ScriptableDeath
+  m_EditorClassIdentifier: 
+  enemyUnitDeathEffect: {fileID: 168956, guid: a43046beb568df845a38eee69935e8af, type: 3}
+  playerUnitDeathEffect: {fileID: 168956, guid: ae17d4a182a7e02448b4e420f9da16ea, type: 3}
