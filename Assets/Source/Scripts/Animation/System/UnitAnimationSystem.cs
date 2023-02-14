@@ -12,6 +12,17 @@ public sealed class UnitAnimationSystem : UpdateSystem
     Filter entities;
     public override void OnAwake()
     {
+        var initEntities = this.World.Filter.With<UnitAnimatorComponent>()/*.With<AnimTriggerComponent>()*/;
+
+        foreach (var item in initEntities)
+        {
+            ref var component = ref item.GetComponent<UnitAnimatorComponent>();
+            component.CurrentState = UnitAnimationState.StandingIdle;
+            item.SetComponent(new AnimTriggerComponent
+            {
+                State = UnitAnimationState.StandingIdle
+            });
+        }
         entities = this.World.Filter.With<UnitAnimatorComponent>().With<AnimTriggerComponent>();
     }
 
@@ -24,7 +35,7 @@ public sealed class UnitAnimationSystem : UpdateSystem
 
             var state = trigger.State;
 
-            if (state == animator.CurrentState) continue;
+            if (state == animator.CurrentState || animator.Animator == null) continue;
 
             animator.Animator.Play(state.ToString());
             animator.CurrentState = state;
