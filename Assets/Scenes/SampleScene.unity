@@ -525,6 +525,8 @@ GameObject:
   m_Component:
   - component: {fileID: 116670027}
   - component: {fileID: 116670028}
+  - component: {fileID: 116670030}
+  - component: {fileID: 116670029}
   m_Layer: 0
   m_Name: StartPoint
   m_TagString: Untagged
@@ -563,6 +565,32 @@ MonoBehaviour:
     RespawnProgress: 0
     UnitsCount: 10
     Position: {x: 0, y: 0.5, z: 0}
+--- !u!114 &116670029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 116670026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 566e446d6042cf243bba8a8eea205d3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &116670030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 116670026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3b1358a477edc94daff25ae30f2fee4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializedData:
+    Drawer: {fileID: 116670029}
 --- !u!1001 &125390681
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3232,6 +3260,7 @@ MonoBehaviour:
   initializers:
   - {fileID: 11400000, guid: 3f518f2a23ace5b4ab9e732d38838942, type: 2}
   - {fileID: 11400000, guid: cf28f74492284d34c8daf3ec4f402a95, type: 2}
+  - {fileID: 11400000, guid: f7629f49f4539e047869aac2d81031da, type: 2}
   updateSystems:
   - enabled: 1
     system: {fileID: 11400000, guid: a54a0af6b8c209044ac13f10d65c3bf7, type: 2}
@@ -8532,7 +8561,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 3.3777426e+9, y: 0, z: 0, w: 0}
+  m_BoundingSphereOverride: {x: 4.5904e-41, y: -0.000050678093, z: 4.5904e-41, w: 9.403955e-38}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
