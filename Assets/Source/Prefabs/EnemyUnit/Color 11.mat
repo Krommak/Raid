@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Color 4
-  m_Shader: {fileID: -6465566751694194690, guid: 543b03a6fda4eeb458507b6cc76c6a0f, type: 3}
+  m_Name: Color 11
+  m_Shader: {fileID: 4800000, guid: 7142c161270b3ca42848d2d770dbd4d5, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
@@ -24,6 +24,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Texture2D_C777DB6:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _AnimTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -96,6 +100,7 @@ Material:
     - Vector1_E0D35E7F: 1
     - Vector1_E5F3741B: 1
     - _AlphaClip: 0
+    - _AnimLoop: 1
     - _Blend: 0
     - _BumpScale: 1
     - _ClearCoatMask: 0
@@ -123,16 +128,19 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - Color_338C24C9: {r: 0.6226415, g: 0.14978638, b: 0.18232219, a: 0}
-    - Color_4C3FC43: {r: 0.4056604, g: 0.10524209, b: 0.1980987, a: 0}
+    - Color_338C24C9: {r: 0.9811321, g: 0.124955505, b: 0.18479615, a: 0}
+    - Color_4C3FC43: {r: 0.5849056, g: 0.1517444, b: 0.28453824, a: 0}
     - Color_817F4621: {r: 1, g: 1, b: 1, a: 0}
     - Vector2_4AA906D8: {r: 1, g: 1, b: 0, a: 0}
     - Vector2_7225E914: {r: 0, g: 0, b: 0, a: 0}
+    - _AnimAdd: {r: -0.5, g: 0, b: -0.5, a: 0}
+    - _AnimMul: {r: 1, g: 1, b: 1, a: 0}
+    - _AnimTime: {r: 0, g: 1, b: 1, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _Specular: {r: 0.6415094, g: 0.39111805, b: 0.33588463, a: 0}
+    - _Specular: {r: 1, g: 0.7351554, b: 0.6745283, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &4221223016278270772
 MonoBehaviour:
