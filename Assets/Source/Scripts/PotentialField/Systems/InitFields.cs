@@ -18,16 +18,18 @@ public sealed class InitFields : Initializer
     [SerializeField]
     Vector3 fieldSize;
     [SerializeField]
-    Vector3 firstPoint = new Vector3(-3, 5f, 0);
+    Vector3 firstPoint = new Vector3(-3, 0.5f, 0);
 
     public override void OnAwake()
     {
         var field = this.World.CreateEntity();
         ref var component = ref field.AddComponent<PlayField>();
 
-        int xSize = (int)(fieldSize.x / (nodeRadius / 2));
-        int zSize = (int)(fieldSize.z / (nodeRadius / 2));
+        int xSize = (int)(fieldSize.x / (nodeRadius));
+        int zSize = (int)(fieldSize.z / (nodeRadius));
         component.Fields = new FieldNode[xSize, zSize];
+        component.FirstPoint = firstPoint;
+        component.NodeRadius = nodeRadius;
         var actualX = firstPoint.x + nodeRadius;
         var actualZ = firstPoint.z + nodeRadius;
         for (int z = 0; z < zSize; z++)

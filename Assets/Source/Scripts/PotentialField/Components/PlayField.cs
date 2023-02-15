@@ -9,4 +9,6 @@ using Unity.IL2CPP.CompilerServices;
 public struct PlayField : IComponent
 {
     internal FieldNode[,] Fields;
+    internal float NodeRadius;
+    internal Vector3 FirstPoint;
 }
