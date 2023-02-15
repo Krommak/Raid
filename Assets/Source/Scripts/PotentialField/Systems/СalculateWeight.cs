@@ -33,15 +33,18 @@ public sealed class СalculateWeight : Initializer
                     (float)Math.Round(transform.position.x - weightComponent.Offset, 1, MidpointRounding.ToEven),
                      fieldComponent.FirstPoint.y,
                     (float)Math.Round(transform.position.z - weightComponent.Offset, 1, MidpointRounding.ToEven));
+                var clampedLastPosition = new Vector3(
+                    (float)Math.Round(transform.position.x + weightComponent.Offset, 1, MidpointRounding.ToEven),
+                     fieldComponent.FirstPoint.y,
+                    (float)Math.Round(transform.position.z + weightComponent.Offset, 1, MidpointRounding.ToEven));
 
                 Vector2 start = new Vector2(
-                    (int)(clampedFirstPosition.x / (fieldComponent.NodeRadius * 2)),
-                    (int)(clampedFirstPosition.z / (fieldComponent.NodeRadius * 2))
+                    Mathf.Clamp((int)(clampedFirstPosition.x / (fieldComponent.NodeRadius * 2)), 0, xSize),
+                    Mathf.Clamp((int)(clampedFirstPosition.z / (fieldComponent.NodeRadius * 2)), 0, zSize)
                     );
-                var countSqrt = (int)(weightComponent.Offset*2 / fieldComponent.NodeRadius);
                 Vector2 final = new Vector2(
-                    start.x + countSqrt, 
-                    start.y + countSqrt
+                    Mathf.Clamp((int)(clampedLastPosition.x / (fieldComponent.NodeRadius * 2)), 0, xSize),
+                    Mathf.Clamp((int)(clampedLastPosition.z / (fieldComponent.NodeRadius * 2)), 0, zSize)
                     );
 
                 for (int x = (int)start.x; x < (int)final.x; x++)
@@ -49,9 +52,26 @@ public sealed class СalculateWeight : Initializer
                     for (int z = (int)start.y; z < (int)final.y; z++)
                     {
                         ref var node = ref fieldComponent.Fields[x,z];
-                        if (node.WeightForPlayer > weightComponent.Weight) continue;
+
+                        if (!node.isAvailable || node.WeightForPlayer > weightComponent.Weight) continue;
 
                         node.WeightForPlayer += (int)Mathf.Lerp(weightComponent.Weight, 1, (transform.position - node.Position).magnitude);
+                    }
+                }
+            }
+            foreach (var item in finishEntity)
+            {
+                ref var weightComponent = ref item.GetComponent<FinishWeightComponent>();
+                
+                for (int x = 0; x < xSize; x++)
+                {
+                    for (int z = 0; z < zSize; z++)
+                    {
+                        ref var node = ref fieldComponent.Fields[x, z];
+                        
+                        if (!node.isAvailable) continue;
+
+                        node.WeightForPlayer += z;
                     }
                 }
             }

@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: -3156907457301701168}
   - component: {fileID: 6868698264720377673}
   - component: {fileID: 5174222113845208022}
+  - component: {fileID: 1358015718}
   m_Layer: 0
   m_Name: EnemyUnit
   m_TagString: Untagged
@@ -154,6 +155,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serializedData:
     Particle: {fileID: 5634222426106625417}
+--- !u!114 &1358015718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4032980131400021695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24787ca32d389d34a85bc53871fdd67a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializedData:
+    Transform: {fileID: 2634902713524777599}
+    Weight: 100
+    Offset: 1.5
 --- !u!1001 &3348988036597064788
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -161,6 +178,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2634902713524777599}
     m_Modifications:
+    - target: {fileID: 1899757735195952287, guid: 2d43360582c4a944991263878b9fedae, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3746306189194377188, guid: 2d43360582c4a944991263878b9fedae, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.49907413
