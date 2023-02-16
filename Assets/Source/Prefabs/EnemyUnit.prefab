@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 6868698264720377673}
   - component: {fileID: 5174222113845208022}
   - component: {fileID: 1358015718}
+  - component: {fileID: 1726949020}
   m_Layer: 0
   m_Name: EnemyUnit
   m_TagString: Untagged
@@ -169,8 +170,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serializedData:
     Transform: {fileID: 2634902713524777599}
-    Weight: 100
-    Offset: 1.5
+    Weight: 200
+    Offset: 2
+--- !u!114 &1726949020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4032980131400021695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cea8738e095be74fa07bf1cc78787e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializedData:
+    Transform: {fileID: 2634902713524777599}
+    Weight: -1000
+    Offset: 0.4
 --- !u!1001 &3348988036597064788
 PrefabInstance:
   m_ObjectHideFlags: 0

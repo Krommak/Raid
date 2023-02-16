@@ -2,56 +2,61 @@ using Scellecs.Morpeh.Systems;
 using UnityEngine;
 using Unity.IL2CPP.CompilerServices;
 using Scellecs.Morpeh;
-using System;
 using System.Collections.Generic;
+using System;
+using static UnityEditor.Progress;
+using System.ComponentModel;
 using UnityEditor.Experimental.GraphView;
 
 [Il2CppSetOption(Option.NullChecks, false)]
 [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
 [Il2CppSetOption(Option.DivideByZeroChecks, false)]
-[CreateAssetMenu(menuName = "ECS/Initializers/" + nameof(СalculateWeight))]
-public sealed class СalculateWeight : Initializer
+[CreateAssetMenu(menuName = "ECS/Systems/" + nameof(UpdateFieldSystem))]
+public sealed class UpdateFieldSystem : UpdateSystem
 {
-    Filter finishEntity;
-    Filter enemyEntity;
+    Filter playerEntities;
+    Filter enemyEntities;
     Filter playField;
     public override void OnAwake()
     {
-        finishEntity = this.World.Filter.With<FinishWeightComponent>();
-        enemyEntity = this.World.Filter.With<EnemyWeightComponent>().With<EnemyWeightDecreaseComponent>();
+        playerEntities = this.World.Filter.With<PlayerUnitMovementComponent>().With<UpdateField>().With<PlayerIncreaseWeightComponent>().With<PlayerDecreaseWeightComponent>();
+        enemyEntities = this.World.Filter.With<PlayerUnitMovementComponent>().With<UpdateField>().With<EnemyWeightComponent>().With<EnemyWeightDecreaseComponent>();
         playField = this.World.Filter.With<PlayField>();
+    }
+
+    public override void OnUpdate(float deltaTime)
+    {
         foreach (var field in playField)
         {
             ref var fieldComponent = ref field.GetComponent<PlayField>();
 
-            foreach (var item in enemyEntity)
+            foreach (var item in playerEntities)
             {
-                ref var weightComponent = ref item.GetComponent<EnemyWeightComponent>();
+                ref var weightComponent = ref item.GetComponent<PlayerIncreaseWeightComponent>();
                 var weightInterface = (IWeightComponent)weightComponent;
                 SetWeight(ref weightInterface, ref fieldComponent);
             }
-            foreach (var item in enemyEntity)
+            foreach (var item in playerEntities)
+            {
+                ref var weightComponent = ref item.GetComponent<PlayerDecreaseWeightComponent>();
+                var weightInterface = (IWeightComponent)weightComponent;
+                SetWeight(ref weightInterface, ref fieldComponent, true);
+
+                item.RemoveComponent<UpdateField>();
+            }
+            foreach (var item in enemyEntities)
+            {
+                ref var weightComponent = ref item.GetComponent<EnemyWeightComponent>();
+                var weightInterface = (IWeightComponent)weightComponent;
+                SetWeight(ref weightInterface, ref fieldComponent, false, true);
+            }
+            foreach (var item in enemyEntities)
             {
                 ref var weightComponent = ref item.GetComponent<EnemyWeightDecreaseComponent>();
                 var weightInterface = (IWeightComponent)weightComponent;
-                SetWeight(ref weightInterface, ref fieldComponent, true);
-            }
-            foreach (var item in finishEntity)
-            {
-                ref var weightComponent = ref item.GetComponent<FinishWeightComponent>();
-                var xSize = fieldComponent.Fields.GetLength(0);
-                var zSize = fieldComponent.Fields.GetLength(1);
-                for (int x = 0; x < xSize; x++)
-                {
-                    for (int z = 0; z < zSize; z++)
-                    {
-                        ref var node = ref fieldComponent.Fields[x, z];
-                        
-                        if (!node.isAvailable) continue;
+                SetWeight(ref weightInterface, ref fieldComponent, true, true);
 
-                        node.WeightForPlayer += z;
-                    }
-                }
+                item.RemoveComponent<UpdateField>();
             }
 
             //Test
@@ -65,12 +70,12 @@ public sealed class СalculateWeight : Initializer
         }
     }
 
-    void SetWeight(ref IWeightComponent weightInterface, ref PlayField fieldComponent, bool isDecrease = false)
+    void SetWeight(ref IWeightComponent weightInterface, ref PlayField fieldComponent, bool isDecrease = false, bool isEnemy = false)
     {
         var quad = GetQuad(ref weightInterface, ref fieldComponent);
 
         var weight = weightInterface.Weight;
-
+        
         Vector2 start = quad.Key;
         Vector2 final = quad.Value;
 
@@ -80,15 +85,22 @@ public sealed class СalculateWeight : Initializer
             {
                 ref var node = ref fieldComponent.Fields[x, z];
 
-                if (!isDecrease && (node.WeightForPlayer > weight ||node.WeightForEnemy > weight)) continue;
+                if (!isDecrease && (isEnemy && node.WeightForPlayer > weight || !isEnemy && node.WeightForEnemy > weight)) continue;
 
-                node.WeightForPlayer += (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
-    
-                if(isDecrease)
+                if (isDecrease)
+                {
+                    node.WeightForEnemy += (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
+                    node.WeightForPlayer += (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
+                }
+                else if(isEnemy)
+                    node.WeightForPlayer += (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
+                else
                     node.WeightForEnemy += (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
 
                 if (node.WeightForEnemy < 0 || node.WeightForPlayer < 0)
+                {
                     node.isAvailable = false;
+                }
                 else
                     node.isAvailable = true;
             }
@@ -118,9 +130,5 @@ public sealed class СalculateWeight : Initializer
             new Vector2(
             Mathf.Clamp((int)(clampedLastPosition.x / (fieldComponent.NodeRadius * 2)), 0, xSize),
             Mathf.Clamp((int)(clampedLastPosition.z / (fieldComponent.NodeRadius * 2)), 0, zSize)));
-    }
-
-    public override void Dispose()
-    {
     }
 }

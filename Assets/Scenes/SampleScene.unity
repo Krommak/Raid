@@ -542,7 +542,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 116670026}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.1, y: 0.5, z: 3.71}
+  m_LocalPosition: {x: 4.1, y: 0.5, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -561,10 +561,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializedData:
-    TimeForRespawn: 0.4
+    TimeForRespawn: 0.5
     RespawnProgress: 0
     UnitsCount: 10
-    Position: {x: 0, y: 0.5, z: 0}
+    Position: {x: 4.1, y: 0.5, z: 5}
 --- !u!114 &116670029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3262,7 +3262,11 @@ MonoBehaviour:
   - enabled: 1
     system: {fileID: 11400000, guid: a54a0af6b8c209044ac13f10d65c3bf7, type: 2}
   - enabled: 1
-    system: {fileID: 11400000, guid: b1ecfc413941aec469a2bdffbf569def, type: 2}
+    system: {fileID: 11400000, guid: 63707939f61773f4b91754c9f5702a53, type: 2}
+  - enabled: 1
+    system: {fileID: 11400000, guid: e424a7fcb8522b24f87e2ed4d9f7c531, type: 2}
+  - enabled: 1
+    system: {fileID: 11400000, guid: a8b91d475c48d914499078f39f673d46, type: 2}
   - enabled: 1
     system: {fileID: 11400000, guid: 466c101538ee33143a51d6c2db625eb6, type: 2}
   - enabled: 1
@@ -3291,8 +3295,10 @@ MonoBehaviour:
     system: {fileID: 11400000, guid: aa193654c15c0b647b6dc8fe7a6cc6a9, type: 2}
   - enabled: 1
     system: {fileID: 11400000, guid: 8fc0682c8b85c294eaf12391689fd2c8, type: 2}
-  - enabled: 1
+  - enabled: 0
     system: {fileID: 11400000, guid: 0039095ec3d5efa4a92bd4856f473207, type: 2}
+  - enabled: 0
+    system: {fileID: 11400000, guid: b1ecfc413941aec469a2bdffbf569def, type: 2}
   - enabled: 1
     system: {fileID: 11400000, guid: addc9344d94325944b27bcc085876ef8, type: 2}
   fixedUpdateSystems:
@@ -4822,10 +4828,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2112331070}
     m_Modifications:
-    - target: {fileID: 1358015718, guid: cd179d64dafd16643bc417946a523051, type: 3}
-      propertyPath: serializedData.Weight
-      value: 1000
-      objectReference: {fileID: 0}
     - target: {fileID: 2634902713524777599, guid: cd179d64dafd16643bc417946a523051, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -4873,10 +4875,6 @@ PrefabInstance:
     - target: {fileID: 4032980131400021695, guid: cd179d64dafd16643bc417946a523051, type: 3}
       propertyPath: m_Name
       value: EnemyUnit (3)
-      objectReference: {fileID: 0}
-    - target: {fileID: 4032980131400021695, guid: cd179d64dafd16643bc417946a523051, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cd179d64dafd16643bc417946a523051, type: 3}
@@ -5250,10 +5248,6 @@ PrefabInstance:
     - target: {fileID: 4032980131400021695, guid: cd179d64dafd16643bc417946a523051, type: 3}
       propertyPath: m_Name
       value: EnemyUnit (4)
-      objectReference: {fileID: 0}
-    - target: {fileID: 4032980131400021695, guid: cd179d64dafd16643bc417946a523051, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cd179d64dafd16643bc417946a523051, type: 3}
@@ -8577,7 +8571,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 4.9e-44}
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 4e-44}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0

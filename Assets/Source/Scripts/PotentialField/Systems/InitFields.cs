@@ -46,15 +46,6 @@ public sealed class InitFields : Initializer
             actualX = firstPoint.x + nodeRadius;
             actualZ += nodeRadius * 2;
         }
-
-        var draw = this.World.Filter.With<FiledDrawerComponent>();
-
-        foreach (var item in draw)
-        {
-            ref var comp = ref item.GetComponent<FiledDrawerComponent>();
-
-            comp.Drawer.DrawNodes(component.Fields);
-        }
     }
 
     public override void Dispose()

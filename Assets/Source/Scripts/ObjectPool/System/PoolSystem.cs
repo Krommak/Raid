@@ -2,6 +2,7 @@ using Scellecs.Morpeh.Systems;
 using UnityEngine;
 using Unity.IL2CPP.CompilerServices;
 using Scellecs.Morpeh;
+using UnityEngine.UIElements;
 
 [Il2CppSetOption(Option.NullChecks, false)]
 [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
@@ -76,13 +77,16 @@ public sealed class PoolSystem : UpdateSystem
                 }
 
                 var res = objectPoolComponent.Units.Dequeue();
-                res.transform.position = component.Position;
                 res.SetActive(true);
 
                 var entity = res.GetComponent<HealthProvider>().Entity;
                 ref var health = ref entity.GetComponent<HealthComponent>();
                 health.ActualHP = health.HealthPoition;
-
+                entity.SetComponent(new GetMeFirstPosition()
+                {
+                    Position = component.Position
+                });
+                entity.SetComponent(new UnitIsStay());
                 component.UnitsCount--;
 
                 item.SetComponent(new IncreaseScoreComponent());
