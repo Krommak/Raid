@@ -46,7 +46,7 @@ public sealed class СalculateWeight : Initializer
                     for (int z = 0; z < zSize; z++)
                     {
                         ref var node = ref fieldComponent.Fields[x, z];
-                        
+
                         if (!node.isAvailable) continue;
 
                         node.WeightForPlayer += z;
@@ -67,25 +67,31 @@ public sealed class СalculateWeight : Initializer
 
     void SetWeight(ref IWeightComponent weightInterface, ref PlayField fieldComponent, bool isDecrease = false)
     {
-        var quad = GetQuad(ref weightInterface, ref fieldComponent);
+        var center = GetCenter(ref weightInterface, ref fieldComponent);
 
         var weight = weightInterface.Weight;
 
-        Vector2 start = quad.Key;
-        Vector2 final = quad.Value;
-
-        for (int x = (int)start.x; x < (int)final.x; x++)
+        var xSize = fieldComponent.Fields.GetLength(0);
+        var zSize = fieldComponent.Fields.GetLength(1);
+        var xStart = Mathf.Clamp((int)center.x - weightInterface.Offset, 0, xSize);
+        var zStart = Mathf.Clamp((int)center.y - weightInterface.Offset, 0, zSize);
+        var xFinish = Mathf.Clamp((int)center.x + weightInterface.Offset, 0, xSize);
+        var zFinish = Mathf.Clamp((int)center.y + weightInterface.Offset, 0, zSize);
+        for (int x = xStart; x <= xFinish; x++)
         {
-            for (int z = (int)start.y; z < (int)final.y; z++)
+            for (int z = zStart; z <= zFinish; z++)
             {
                 ref var node = ref fieldComponent.Fields[x, z];
 
-                if (!isDecrease && (node.WeightForPlayer > weight ||node.WeightForEnemy > weight)) continue;
+                if (!isDecrease && (node.WeightForPlayer > weight || node.WeightForEnemy > weight)) continue;
 
                 node.WeightForPlayer += (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
-    
-                if(isDecrease)
-                    node.WeightForEnemy += (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
+
+                if (isDecrease)
+                {
+                    node.WeightForEnemy -= (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
+                    node.WeightForPlayer -= (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
+                }
 
                 if (node.WeightForEnemy < 0 || node.WeightForPlayer < 0)
                     node.isAvailable = false;
@@ -95,29 +101,20 @@ public sealed class СalculateWeight : Initializer
         }
     }
 
-    KeyValuePair<Vector2, Vector2> GetQuad(ref IWeightComponent weightComponent, ref PlayField fieldComponent)
+    Vector2 GetCenter(ref IWeightComponent weightComponent, ref PlayField fieldComponent)
     {
         var xSize = fieldComponent.Fields.GetLength(0);
         var zSize = fieldComponent.Fields.GetLength(1);
         var transform = weightComponent.Transform;
 
-        var clampedFirstPosition = new Vector3(
-            (float)Math.Round(transform.position.x - weightComponent.Offset, 1, MidpointRounding.ToEven),
-             fieldComponent.FirstPoint.y,
-            (float)Math.Round(transform.position.z - weightComponent.Offset, 1, MidpointRounding.ToEven));
+        var centerPosition = new Vector2(
+            (float)Math.Round(transform.position.x, 1, MidpointRounding.ToEven),
+            (float)Math.Round(transform.position.z, 1, MidpointRounding.ToEven));
 
-        var clampedLastPosition = new Vector3(
-            (float)Math.Round(transform.position.x + weightComponent.Offset, 1, MidpointRounding.ToEven),
-             fieldComponent.FirstPoint.y,
-            (float)Math.Round(transform.position.z + weightComponent.Offset, 1, MidpointRounding.ToEven));
-
-        return new KeyValuePair<Vector2, Vector2>(
-            new Vector2(
-            Mathf.Clamp((int)(clampedFirstPosition.x / (fieldComponent.NodeRadius * 2)), 0, xSize),
-            Mathf.Clamp((int)(clampedFirstPosition.z / (fieldComponent.NodeRadius * 2)), 0, zSize)),
-            new Vector2(
-            Mathf.Clamp((int)(clampedLastPosition.x / (fieldComponent.NodeRadius * 2)), 0, xSize),
-            Mathf.Clamp((int)(clampedLastPosition.z / (fieldComponent.NodeRadius * 2)), 0, zSize)));
+        return new Vector2(
+            Mathf.Clamp((int)(centerPosition.x / (fieldComponent.NodeRadius * 2)), 0, xSize),
+            Mathf.Clamp((int)(centerPosition.y / (fieldComponent.NodeRadius * 2)), 0, zSize)
+            );
     }
 
     public override void Dispose()

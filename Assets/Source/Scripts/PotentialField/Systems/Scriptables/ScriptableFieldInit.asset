@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67863a854c3f80f4482525dc17b02a1e, type: 3}
   m_Name: ScriptableFieldInit
   m_EditorClassIdentifier: 
-  nodeRadius: 0.2
+  nodeRadius: 0.1
   grassMask:
     serializedVersion: 2
     m_Bits: 64

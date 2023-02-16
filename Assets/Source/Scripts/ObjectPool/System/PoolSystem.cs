@@ -71,6 +71,7 @@ public sealed class PoolSystem : UpdateSystem
 
             if (component.RespawnProgress >= component.TimeForRespawn)
             {
+                component.RespawnProgress = 0;
                 if (objectPoolComponent.Units.Count == 0)
                 {
                     objectPoolComponent.Units.Enqueue(CreateUnit(objectPoolComponent.UnitPrefab, objectPoolComponent.Container));

@@ -13,9 +13,9 @@ public struct EnemyWeightComponent : IComponent, IWeightComponent
     [SerializeField]
     int Weight;
     [SerializeField]
-    float Offset;
+    int Offset;
 
     Transform IWeightComponent.Transform { get => this.Transform; }
     int IWeightComponent.Weight { get => this.Weight; }
-    float IWeightComponent.Offset { get => this.Offset; }
+    int IWeightComponent.Offset { get => this.Offset; }
 }

@@ -187,7 +187,7 @@ MonoBehaviour:
   serializedData:
     Transform: {fileID: 2634902713524777599}
     Weight: 280
-    Offset: 0.05
+    Offset: 1
 --- !u!1001 &3348988036597064788
 PrefabInstance:
   m_ObjectHideFlags: 0
