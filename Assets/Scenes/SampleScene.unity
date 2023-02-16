@@ -1186,7 +1186,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 258690041}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.1, y: 0.5, z: 46.5}
+  m_LocalPosition: {x: 3.8, y: 0.5, z: 46.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1540958631}
@@ -3268,6 +3268,8 @@ MonoBehaviour:
   - enabled: 1
     system: {fileID: 11400000, guid: a8b91d475c48d914499078f39f673d46, type: 2}
   - enabled: 1
+    system: {fileID: 11400000, guid: cba7d36c1795fc247ba4e62eb3c79312, type: 2}
+  - enabled: 1
     system: {fileID: 11400000, guid: 466c101538ee33143a51d6c2db625eb6, type: 2}
   - enabled: 1
     system: {fileID: 11400000, guid: f2cc2f821d0b9aa4d86811a3da547380, type: 2}
@@ -3295,8 +3297,6 @@ MonoBehaviour:
     system: {fileID: 11400000, guid: aa193654c15c0b647b6dc8fe7a6cc6a9, type: 2}
   - enabled: 1
     system: {fileID: 11400000, guid: 8fc0682c8b85c294eaf12391689fd2c8, type: 2}
-  - enabled: 0
-    system: {fileID: 11400000, guid: 0039095ec3d5efa4a92bd4856f473207, type: 2}
   - enabled: 0
     system: {fileID: 11400000, guid: b1ecfc413941aec469a2bdffbf569def, type: 2}
   - enabled: 1
@@ -8319,7 +8319,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2112331068}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.1, y: 0.5, z: 18.5}
+  m_LocalPosition: {x: 3.8, y: 0.5, z: 18.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1280301902}
@@ -8571,7 +8571,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 4e-44}
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0

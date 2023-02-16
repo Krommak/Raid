@@ -10,6 +10,7 @@ using System;
 public struct PlayerUnitMovementComponent : IComponent, IDisposable
 {
     public Transform Transform;
+    public float Speed;
     internal Vector3 TargetPosition;
     internal Vector2 OccupiedNode;
 

@@ -89,8 +89,8 @@ public sealed class UpdateFieldSystem : UpdateSystem
 
                 if (isDecrease)
                 {
-                    node.WeightForEnemy += (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
-                    node.WeightForPlayer += (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
+                    node.WeightForEnemy -= (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
+                    node.WeightForPlayer -= (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
                 }
                 else if(isEnemy)
                     node.WeightForPlayer += (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);

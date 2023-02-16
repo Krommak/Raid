@@ -9,7 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a04a435614af4414d803462ca376bc6e, type: 3}
-  m_Name: ScriptableUnitMovement
+  m_Script: {fileID: 11500000, guid: 44e3099dcf8c10f4ba6caabc1516a4ef, type: 3}
+  m_Name: ScriptableSetStartPos
   m_EditorClassIdentifier: 
-  velocityForIdle: 0.2

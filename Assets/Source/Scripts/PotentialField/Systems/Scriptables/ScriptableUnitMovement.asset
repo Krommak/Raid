@@ -9,6 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44e3099dcf8c10f4ba6caabc1516a4ef, type: 3}
+  m_Script: {fileID: 11500000, guid: 3378af9069d67e24f8a8523a10351fd7, type: 3}
   m_Name: ScriptableUnitMovement
   m_EditorClassIdentifier: 
+  distanceToTargetForStop: 0.01

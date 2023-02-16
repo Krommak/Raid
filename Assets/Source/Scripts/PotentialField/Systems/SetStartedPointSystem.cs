@@ -34,6 +34,7 @@ public sealed class SetStartedPointSystem : UpdateSystem
                 {
                     movementComponent.Transform.position = fieldComponent.Fields[(int)movementComponent.OccupiedNode.x, (int)movementComponent.OccupiedNode.y].Position;
                     unit.RemoveComponent<GetMeFirstPosition>();
+                    unit.SetComponent(new UpdateField());
                     unit.SetComponent(new UnitIsStay());
                 }
             }

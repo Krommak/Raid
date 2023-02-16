@@ -27,16 +27,12 @@ public sealed class PlayerUnitSetTargetSystem : UpdateSystem
             foreach (var unit in playerUnits)
             {
                 ref var movementComponent = ref unit.GetComponent<PlayerUnitMovementComponent>();
-
                 if (movementComponent.OccupiedNode == Vector2.left)
-                {
-                    unit.SetComponent(new GetMeFirstPosition());
                     continue;
-                }
 
+                movementComponent.OccupiedNode = movementComponent.Transform.position;
                 movementComponent.TargetPosition = GetTargetPosition(movementComponent.Transform.position, ref fieldComponent);
                 unit.RemoveComponent<UnitIsStay>();
-                unit.SetComponent(new UpdateField());
             }
         }
     }
@@ -53,14 +49,15 @@ public sealed class PlayerUnitSetTargetSystem : UpdateSystem
             Mathf.Clamp((int)(clampedPosition.z / (field.NodeRadius * 2)), 0, field.Fields.GetLength(1))
             );
 
-
         var firstPos = new Vector2(
                 Mathf.Clamp((int)posInArray.x - 1, 0, field.Fields.GetLength(0)),
-                Mathf.Clamp((int)posInArray.y - 1, 0, field.Fields.GetLength(1)));
+                Mathf.Clamp((int)posInArray.y - 1, 0, field.Fields.GetLength(1))
+                );
 
         var lastPos = new Vector2(
                 Mathf.Clamp((int)posInArray.x - 1, 0, field.Fields.GetLength(0)),
-                Mathf.Clamp((int)posInArray.y - 1, 0, field.Fields.GetLength(1)));
+                Mathf.Clamp((int)posInArray.y - 1, 0, field.Fields.GetLength(1))
+                );
 
         var actualWeight = field.Fields[(int)posInArray.x, (int)posInArray.y].WeightForPlayer;
 
@@ -69,8 +66,11 @@ public sealed class PlayerUnitSetTargetSystem : UpdateSystem
         {
             for (int z = (int)firstPos.y; z <= (int)lastPos.y; z++)
             {
-                if (field.Fields[x, z].WeightForPlayer > actualWeight)
+                if (field.Fields[x, z].isAvailable && field.Fields[x, z].WeightForPlayer > actualWeight)
+                {
+                    actualWeight = field.Fields[x, z].WeightForPlayer;
                     potentialPos = field.Fields[x, z].Position;
+                }
             }
         }
 
