@@ -18,7 +18,7 @@ public sealed class СalculateWeight : Initializer
     public override void OnAwake()
     {
         finishEntity = this.World.Filter.With<FinishWeightComponent>();
-        enemyEntity = this.World.Filter.With<EnemyWeightComponent>().With<EnemyWeightDecreaseComponent>();
+        enemyEntity = this.World.Filter.With<EnemyWeightComponent>().With<WeightComponent>();
         playField = this.World.Filter.With<PlayField>();
         foreach (var field in playField)
         {
@@ -26,15 +26,7 @@ public sealed class СalculateWeight : Initializer
 
             foreach (var item in enemyEntity)
             {
-                ref var weightComponent = ref item.GetComponent<EnemyWeightComponent>();
-                var weightInterface = (IWeightComponent)weightComponent;
-                SetWeight(ref weightInterface, ref fieldComponent);
-            }
-            foreach (var item in enemyEntity)
-            {
-                ref var weightComponent = ref item.GetComponent<EnemyWeightDecreaseComponent>();
-                var weightInterface = (IWeightComponent)weightComponent;
-                SetWeight(ref weightInterface, ref fieldComponent, true);
+                CalculateWeight(item, ref fieldComponent);
             }
             foreach (var item in finishEntity)
             {
@@ -65,53 +57,58 @@ public sealed class СalculateWeight : Initializer
         }
     }
 
-    void SetWeight(ref IWeightComponent weightInterface, ref PlayField fieldComponent, bool isDecrease = false)
+    void CalculateWeight(Entity entity, ref PlayField fieldComponent)
     {
-        var center = GetCenter(ref weightInterface, ref fieldComponent);
+        ref WeightComponent weightComponent = ref entity.GetComponent<WeightComponent>();
+        SetWeight(ref weightComponent, ref fieldComponent);
+    }
 
-        var weight = weightInterface.Weight;
+    void SetWeight(ref WeightComponent weightComponent, ref PlayField fieldComponent)
+    {
+        var center = GetCenter(weightComponent.Transform.position, ref fieldComponent);
 
-        var xSize = fieldComponent.Fields.GetLength(0);
-        var zSize = fieldComponent.Fields.GetLength(1);
-        var xStart = Mathf.Clamp((int)center.x - weightInterface.Offset, 0, xSize);
-        var zStart = Mathf.Clamp((int)center.y - weightInterface.Offset, 0, zSize);
-        var xFinish = Mathf.Clamp((int)center.x + weightInterface.Offset, 0, xSize);
-        var zFinish = Mathf.Clamp((int)center.y + weightInterface.Offset, 0, zSize);
+        fieldComponent.Fields[center.x, center.y].isAvailable = false;
+
+        SetWeight(center, weightComponent.IncreaseWeightAndOffset, ref fieldComponent, false);
+        SetWeight(center, weightComponent.DecreaseWeightAndOffset, ref fieldComponent, true);
+    }
+
+    void SetWeight(Vector2Int center, Vector2Int weightAndOffset, ref PlayField fieldComponent, bool isDecrease)
+    {
+        var xSize = fieldComponent.Fields.GetLength(0) - 1;
+        var zSize = fieldComponent.Fields.GetLength(1) - 1;
+        var xStart = Mathf.Clamp(center.x - weightAndOffset.y, 0, xSize);
+        var zStart = Mathf.Clamp(center.y - weightAndOffset.y, 0, zSize);
+        var xFinish = Mathf.Clamp(center.x + weightAndOffset.y, 0, xSize);
+        var zFinish = Mathf.Clamp(center.y + weightAndOffset.y, 0, zSize);
         for (int x = xStart; x <= xFinish; x++)
         {
             for (int z = zStart; z <= zFinish; z++)
             {
                 ref var node = ref fieldComponent.Fields[x, z];
 
-                if (!isDecrease && (node.WeightForPlayer > weight || node.WeightForEnemy > weight)) continue;
-
-                node.WeightForPlayer += (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
+                var influence = weightAndOffset.x / (Math.Abs(center.x - x + center.y - z) + 1);
 
                 if (isDecrease)
                 {
-                    node.WeightForEnemy -= (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
-                    node.WeightForPlayer -= (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
+                    node.WeightForEnemy += influence;
+                    node.WeightForPlayer += influence;
                 }
-
-                if (node.WeightForEnemy < 0 || node.WeightForPlayer < 0)
-                    node.isAvailable = false;
                 else
-                    node.isAvailable = true;
+                    node.WeightForPlayer += influence;
             }
         }
     }
 
-    Vector2 GetCenter(ref IWeightComponent weightComponent, ref PlayField fieldComponent)
+    Vector2Int GetCenter(Vector3 pos, ref PlayField fieldComponent)
     {
         var xSize = fieldComponent.Fields.GetLength(0);
         var zSize = fieldComponent.Fields.GetLength(1);
-        var transform = weightComponent.Transform;
-
         var centerPosition = new Vector2(
-            (float)Math.Round(transform.position.x, 1, MidpointRounding.ToEven),
-            (float)Math.Round(transform.position.z, 1, MidpointRounding.ToEven));
+            (float)Math.Round(pos.x, 1, MidpointRounding.ToEven),
+            (float)Math.Round(pos.z, 1, MidpointRounding.ToEven));
 
-        return new Vector2(
+        return new Vector2Int(
             Mathf.Clamp((int)(centerPosition.x / (fieldComponent.NodeRadius * 2)), 0, xSize),
             Mathf.Clamp((int)(centerPosition.y / (fieldComponent.NodeRadius * 2)), 0, zSize)
             );

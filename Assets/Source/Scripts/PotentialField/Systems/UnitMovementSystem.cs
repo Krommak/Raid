@@ -24,12 +24,15 @@ public sealed class UnitMovementSystem : UpdateSystem
         {
             ref var movementComponent = ref unit.GetComponent<PlayerUnitMovementComponent>();
 
-            movementComponent.Transform.position = Vector3.Lerp(movementComponent.Transform.position, movementComponent.TargetPosition, movementComponent.Speed);
+            movementComponent.Transform.position = Vector3.MoveTowards(movementComponent.Transform.position, movementComponent.TargetPosition, movementComponent.Speed* deltaTime);
 
             if ((movementComponent.Transform.position - movementComponent.TargetPosition).magnitude <= distanceToTargetForStop)
             {
-                unit.SetComponent(new UnitIsStay());
-                unit.SetComponent(new UpdateField());
+                movementComponent.Transform.position = movementComponent.TargetPosition;
+                unit.SetComponent(new UpdateField()
+                {
+                    UpdateWithReset = true,
+                });
             }
         }
     }

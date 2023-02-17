@@ -19,8 +19,7 @@ GameObject:
   - component: {fileID: 1338249594860087568}
   - component: {fileID: 1902838745600919198}
   - component: {fileID: 7784295286372522803}
-  - component: {fileID: 962192068304415289}
-  - component: {fileID: -1209828650090119671}
+  - component: {fileID: 5628975669134050037}
   m_Layer: 7
   m_Name: PlayerUnit
   m_TagString: Untagged
@@ -187,8 +186,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serializedData:
     Transform: {fileID: 7560040556058657056}
-    Speed: 0.1
---- !u!114 &962192068304415289
+    Speed: 2
+--- !u!114 &5628975669134050037
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -202,24 +201,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serializedData:
     Transform: {fileID: 7560040556058657056}
-    Weight: 200
-    Offset: 1
---- !u!114 &-1209828650090119671
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7560040556058657057}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d03b6f4b325e7d640a8ffb0c77311668, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializedData:
-    Transform: {fileID: 7560040556058657056}
-    Weight: 250
-    Offset: 1
+    IncreaseWeightAndOffset: {x: 200, y: 5}
+    DecreaseWeightAndOffset: {x: -250, y: 1}
 --- !u!1001 &2658698878629374721
 PrefabInstance:
   m_ObjectHideFlags: 0

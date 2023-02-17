@@ -11,11 +11,13 @@ public struct PlayerUnitMovementComponent : IComponent, IDisposable
 {
     public Transform Transform;
     public float Speed;
+    
     internal Vector3 TargetPosition;
-    internal Vector2 OccupiedNode;
+    internal Vector2Int OccupiedNode;
+    internal Vector2Int NextNode;
 
     public void Dispose()
     {
-        OccupiedNode = Vector2.left;
+        OccupiedNode = Vector2Int.left;
     }
 }

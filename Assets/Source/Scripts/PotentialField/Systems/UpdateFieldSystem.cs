@@ -19,8 +19,8 @@ public sealed class UpdateFieldSystem : UpdateSystem
     Filter playField;
     public override void OnAwake()
     {
-        playerEntities = this.World.Filter.With<PlayerUnitMovementComponent>().With<UpdateField>().With<PlayerIncreaseWeightComponent>().With<PlayerDecreaseWeightComponent>();
-        enemyEntities = this.World.Filter.With<PlayerUnitMovementComponent>().With<UpdateField>().With<EnemyWeightComponent>().With<EnemyWeightDecreaseComponent>();
+        playerEntities = this.World.Filter.With<PlayerUnitMovementComponent>().With<UpdateField>().With<WeightComponent>();
+        enemyEntities = this.World.Filter.With<EnemyUnitMovementComponent>().With<UpdateField>().With<WeightComponent>();
         playField = this.World.Filter.With<PlayField>();
     }
 
@@ -32,35 +32,16 @@ public sealed class UpdateFieldSystem : UpdateSystem
 
             foreach (var item in playerEntities)
             {
-                ref var weightComponent = ref item.GetComponent<PlayerIncreaseWeightComponent>();
-                var weightInterface = (IWeightComponent)weightComponent;
-                SetWeight(ref weightInterface, ref fieldComponent);
-                item.RemoveComponent<UpdateField>();
-            }
-            foreach (var item in playerEntities)
-            {
-                ref var weightComponent = ref item.GetComponent<PlayerDecreaseWeightComponent>();
-                var weightInterface = (IWeightComponent)weightComponent;
-                SetWeight(ref weightInterface, ref fieldComponent, true);
-
+                CalculateWeight(item, ref fieldComponent);
+                item.SetComponent(new UnitIsStay());
                 item.RemoveComponent<UpdateField>();
             }
             foreach (var item in enemyEntities)
             {
-                ref var weightComponent = ref item.GetComponent<EnemyWeightComponent>();
-                var weightInterface = (IWeightComponent)weightComponent;
-                SetWeight(ref weightInterface, ref fieldComponent, false, true);
+                CalculateWeight(item, ref fieldComponent, true);
+                item.SetComponent(new UnitIsStay());
                 item.RemoveComponent<UpdateField>();
             }
-            foreach (var item in enemyEntities)
-            {
-                ref var weightComponent = ref item.GetComponent<EnemyWeightDecreaseComponent>();
-                var weightInterface = (IWeightComponent)weightComponent;
-                SetWeight(ref weightInterface, ref fieldComponent, true, true);
-
-                item.RemoveComponent<UpdateField>();
-            }
-
             //Test
             var draw = this.World.Filter.With<FiledDrawerComponent>();
 
@@ -72,56 +53,88 @@ public sealed class UpdateFieldSystem : UpdateSystem
         }
     }
 
-    void SetWeight(ref IWeightComponent weightInterface, ref PlayField fieldComponent, bool isDecrease = false, bool isEnemy = false)
+    void CalculateWeight(Entity entity, ref PlayField fieldComponent, bool isEnemy = false)
     {
-        var center = GetCenter(ref weightInterface, ref fieldComponent);
+        ref WeightComponent weightComponent = ref entity.GetComponent<WeightComponent>();
+        ref var update = ref entity.GetComponent<UpdateField>();
+        if (update.UpdateWithReset)
+        {
+            ref var movementComponent = ref entity.GetComponent<PlayerUnitMovementComponent>();
+            ResetWeight(ref weightComponent, ref fieldComponent);
+            movementComponent.OccupiedNode = movementComponent.NextNode;
+        }
+        SetWeight(ref weightComponent, ref fieldComponent, isEnemy);
+    }
 
-        var weight = weightInterface.Weight;
+    void ResetWeight(ref WeightComponent weightComponent, ref PlayField fieldComponent)
+    {
+        var center = GetCenter(weightComponent.Transform.position, ref fieldComponent);
+        fieldComponent.Fields[center.x, center.y].isAvailable = true;
 
-        var xSize = fieldComponent.Fields.GetLength(0);
-        var zSize = fieldComponent.Fields.GetLength(1);
-        var xStart = Mathf.Clamp((int)center.x - weightInterface.Offset, 0, xSize);
-        var zStart = Mathf.Clamp((int)center.y - weightInterface.Offset, 0, zSize);
-        var xFinish = Mathf.Clamp((int)center.x + weightInterface.Offset, 0, xSize);
-        var zFinish = Mathf.Clamp((int)center.y + weightInterface.Offset, 0, zSize);
+        foreach (var item in weightComponent.InfluenceArea.Keys)
+        {
+            fieldComponent.Fields[item.x, item.y].WeightForPlayer = weightComponent.InfluenceArea[item].x;
+            fieldComponent.Fields[item.x, item.y].WeightForEnemy = weightComponent.InfluenceArea[item].y;
+        }
+        weightComponent.InfluenceArea.Clear();
+    }
+
+    void SetWeight(ref WeightComponent weightComponent, ref PlayField fieldComponent, bool isEnemy)
+    {
+        var center = GetCenter(weightComponent.Transform.position, ref fieldComponent);
+
+        fieldComponent.Fields[center.x, center.y].isAvailable = false;
+
+        weightComponent.InfluenceArea = SetWeight(center, weightComponent.IncreaseWeightAndOffset, ref fieldComponent, false,  isEnemy);
+        SetWeight(center, weightComponent.DecreaseWeightAndOffset, ref fieldComponent, true, isEnemy);
+    }
+
+    Dictionary<Vector2Int, Vector2Int> SetWeight(Vector2Int center, Vector2Int weightAndOffset, ref PlayField fieldComponent, bool isDecrease, bool isEnemy)
+    {
+        Dictionary<Vector2Int, Vector2Int> result = new Dictionary<Vector2Int, Vector2Int>();
+        var xSize = fieldComponent.Fields.GetLength(0) - 1;
+        var zSize = fieldComponent.Fields.GetLength(1) - 1;
+        var xStart = Mathf.Clamp(center.x - weightAndOffset.y, 0, xSize);
+        var zStart = Mathf.Clamp(center.y - weightAndOffset.y, 0, zSize);
+        var xFinish = Mathf.Clamp(center.x + weightAndOffset.y, 0, xSize);
+        var zFinish = Mathf.Clamp(center.y + weightAndOffset.y, 0, zSize);
         for (int x = xStart; x <= xFinish; x++)
         {
             for (int z = zStart; z <= zFinish; z++)
             {
                 ref var node = ref fieldComponent.Fields[x, z];
 
-                if (!isDecrease && (isEnemy && node.WeightForPlayer > weight || !isEnemy && node.WeightForEnemy > weight)) continue;
+                var influence = weightAndOffset.x / (Math.Abs(center.x - x + center.y - z) + 1);
+
+                result.Add(new Vector2Int(x, z), new Vector2Int(z, 0));
 
                 if (isDecrease)
                 {
-                    node.WeightForEnemy -= (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
-                    node.WeightForPlayer -= (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
+                    node.WeightForEnemy += influence;
+                    node.WeightForPlayer += influence;
                 }
                 else if (isEnemy)
-                    node.WeightForPlayer += (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
-                else
-                    node.WeightForEnemy += (int)Mathf.Lerp(weight, 1, (weightInterface.Transform.position - node.Position).magnitude);
-
-                if (node.WeightForEnemy < 0 || node.WeightForPlayer < 0)
                 {
-                    node.isAvailable = false;
+                    node.WeightForPlayer += influence;
                 }
                 else
-                    node.isAvailable = true;
+                {
+                    node.WeightForEnemy += influence;
+                }
             }
         }
+        return result;
     }
 
-    Vector2 GetCenter(ref IWeightComponent weightComponent, ref PlayField fieldComponent)
+    Vector2Int GetCenter(Vector3 pos, ref PlayField fieldComponent)
     {
         var xSize = fieldComponent.Fields.GetLength(0);
         var zSize = fieldComponent.Fields.GetLength(1);
-        var transform = weightComponent.Transform;
         var centerPosition = new Vector2(
-            (float)Math.Round(transform.position.x, 1, MidpointRounding.ToEven),
-            (float)Math.Round(transform.position.z, 1, MidpointRounding.ToEven));
+            (float)Math.Round(pos.x, 1, MidpointRounding.ToEven),
+            (float)Math.Round(pos.z, 1, MidpointRounding.ToEven));
 
-        return new Vector2(
+        return new Vector2Int(
             Mathf.Clamp((int)(centerPosition.x / (fieldComponent.NodeRadius * 2)), 0, xSize),
             Mathf.Clamp((int)(centerPosition.y / (fieldComponent.NodeRadius * 2)), 0, zSize)
             );

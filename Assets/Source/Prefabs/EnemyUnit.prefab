@@ -17,8 +17,7 @@ GameObject:
   - component: {fileID: -3156907457301701168}
   - component: {fileID: 6868698264720377673}
   - component: {fileID: 5174222113845208022}
-  - component: {fileID: 1358015718}
-  - component: {fileID: 1726949020}
+  - component: {fileID: 4794291181259962640}
   m_Layer: 0
   m_Name: EnemyUnit
   m_TagString: Untagged
@@ -156,7 +155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serializedData:
     Particle: {fileID: 5634222426106625417}
---- !u!114 &1358015718
+--- !u!114 &4794291181259962640
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -165,29 +164,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 4032980131400021695}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24787ca32d389d34a85bc53871fdd67a, type: 3}
+  m_Script: {fileID: 11500000, guid: 9e653130e97f5a848afff5973b1b5f2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   serializedData:
     Transform: {fileID: 2634902713524777599}
-    Weight: 200
-    Offset: 2
---- !u!114 &1726949020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4032980131400021695}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cea8738e095be74fa07bf1cc78787e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializedData:
-    Transform: {fileID: 2634902713524777599}
-    Weight: 280
-    Offset: 1
+    IncreaseWeightAndOffset: {x: 200, y: 5}
+    DecreaseWeightAndOffset: {x: 280, y: 1}
 --- !u!1001 &3348988036597064788
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -8,4 +8,5 @@ using Unity.IL2CPP.CompilerServices;
 [Il2CppSetOption(Option.DivideByZeroChecks, false)]
 public struct UpdateField : IComponent
 {
+    internal bool UpdateWithReset;
 }

@@ -27,7 +27,7 @@ public class FieldNodeDrawer : MonoBehaviour
                     Gizmos.color = playField[x, z].isAvailable ? Color.white : Color.black;
                     if (playField[x, z].WeightForPlayer > 0) 
                         Gizmos.color = new Color((float)playField[x, z].WeightForPlayer/ (float)zSize, 1f - (float)playField[x, z].WeightForPlayer / (float)zSize, 1f - (float)playField[x, z].WeightForPlayer / (float)zSize);
-                    Gizmos.DrawCube(playField[x, z].Position, new Vector3(0.2f, 0.2f, 0.2f));
+                    Gizmos.DrawCube(playField[x, z].Position, new Vector3(0.1f, 0.1f, 0.1f));
                 }
             }
         }

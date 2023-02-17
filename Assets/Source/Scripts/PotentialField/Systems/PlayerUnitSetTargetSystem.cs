@@ -4,6 +4,7 @@ using Unity.IL2CPP.CompilerServices;
 using Scellecs.Morpeh;
 using System;
 using Scellecs.Morpeh.Experimental;
+using System.Collections.Generic;
 
 [Il2CppSetOption(Option.NullChecks, false)]
 [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
@@ -15,7 +16,7 @@ public sealed class PlayerUnitSetTargetSystem : UpdateSystem
     Filter playField;
     public override void OnAwake()
     {
-        playerUnits = this.World.Filter.With<PlayerUnitMovementComponent>().With<UnitIsStay>().Without<GetMeFirstPosition>();
+        playerUnits = this.World.Filter.With<PlayerUnitMovementComponent>().With<WeightComponent>().With<UnitIsStay>().Without<GetMeFirstPosition>();
         playField = this.World.Filter.With<PlayField>();
     }
 
@@ -27,49 +28,61 @@ public sealed class PlayerUnitSetTargetSystem : UpdateSystem
             foreach (var unit in playerUnits)
             {
                 ref var movementComponent = ref unit.GetComponent<PlayerUnitMovementComponent>();
+                var decreaseOffset = unit.GetComponent<WeightComponent>().DecreaseWeightAndOffset.y;
                 if (movementComponent.OccupiedNode == Vector2.left)
                     continue;
-
-                movementComponent.OccupiedNode = movementComponent.Transform.position;
-                movementComponent.TargetPosition = GetTargetPosition(movementComponent.Transform.position, ref fieldComponent);
-                unit.RemoveComponent<UnitIsStay>();
+                var nextNode = GetNextPosition(movementComponent.OccupiedNode, ref fieldComponent, decreaseOffset);
+                if (nextNode != movementComponent.OccupiedNode)
+                {
+                    movementComponent.NextNode = nextNode;
+                    movementComponent.TargetPosition = fieldComponent.Fields[nextNode.x, nextNode.y].Position;
+                    unit.RemoveComponent<UnitIsStay>();
+                }
             }
         }
     }
 
-    Vector3 GetTargetPosition(Vector3 unitPosition, ref PlayField field)
+    Vector2Int GetNextPosition(Vector2Int unitPosition, ref PlayField field, int decreaseOffset)
     {
-        var clampedPosition = new Vector3(
-            (float)Math.Round(unitPosition.x, 1, MidpointRounding.ToEven),
-             field.FirstPoint.y,
-            (float)Math.Round(unitPosition.z, 1, MidpointRounding.ToEven));
-
-        var posInArray = new Vector2(
-            Mathf.Clamp((int)(clampedPosition.x / (field.NodeRadius * 2)), 0, field.Fields.GetLength(0)),
-            Mathf.Clamp((int)(clampedPosition.z / (field.NodeRadius * 2)), 0, field.Fields.GetLength(1))
-            );
-
-        var firstPos = new Vector2(
-                Mathf.Clamp((int)posInArray.x - 1, 0, field.Fields.GetLength(0)),
-                Mathf.Clamp((int)posInArray.y - 1, 0, field.Fields.GetLength(1))
-                );
-
-        var lastPos = new Vector2(
-                Mathf.Clamp((int)posInArray.x - 1, 0, field.Fields.GetLength(0)),
-                Mathf.Clamp((int)posInArray.y - 1, 0, field.Fields.GetLength(1))
-                );
-
-        var actualWeight = field.Fields[(int)posInArray.x, (int)posInArray.y].WeightForPlayer;
-
         var potentialPos = unitPosition;
-        for (int x = (int)firstPos.x; x <= (int)lastPos.x; x++)
+
+        var actualWeight = field.Fields[unitPosition.x, unitPosition.y].WeightForPlayer;
+
+        var xSize = field.Fields.GetLength(0) - 1;
+        var zSize = field.Fields.GetLength(1) - 1;
+
+        var firstX = Mathf.Clamp(unitPosition.x, 0, xSize);
+        var firstZ = Mathf.Clamp(unitPosition.y + decreaseOffset+1, 0, zSize);
+
+        for (int x = 0; x <= decreaseOffset + 1; x++)
         {
-            for (int z = (int)firstPos.y; z <= (int)lastPos.y; z++)
+            var posFirst = Mathf.Clamp(firstX + x, 0, xSize);
+            if (field.Fields[posFirst, firstZ].isAvailable && actualWeight < field.Fields[posFirst, firstZ].WeightForPlayer)
             {
-                if (field.Fields[x, z].isAvailable && field.Fields[x, z].WeightForPlayer > actualWeight)
+                potentialPos = new Vector2Int(posFirst, firstZ);
+                actualWeight = field.Fields[posFirst, firstZ].WeightForPlayer;
+            }
+            var posSecond = Mathf.Clamp(firstX - x, 0, xSize);
+            if (field.Fields[posSecond, firstZ].isAvailable && actualWeight < field.Fields[posSecond, firstZ].WeightForPlayer)
+            {
+                potentialPos = new Vector2Int(posSecond, firstZ);
+                actualWeight = field.Fields[posSecond, firstZ].WeightForPlayer;
+            }
+        }
+
+        firstX = Mathf.Clamp(unitPosition.x - (decreaseOffset + 1), 0, xSize);
+        firstZ = Mathf.Clamp(unitPosition.y - (decreaseOffset + 1), 0, zSize);
+        var finalX = Mathf.Clamp(unitPosition.x + (decreaseOffset + 1), 0, xSize);
+        var finalZ = Mathf.Clamp(unitPosition.y + decreaseOffset, 0, zSize);
+        
+        for (int z = firstZ; z <= finalZ; z++)
+        {
+            for (int x = firstX; x <= finalX; x++)
+            {
+                if (field.Fields[x, z].isAvailable && actualWeight < field.Fields[x, z].WeightForPlayer)
                 {
+                    potentialPos = new Vector2Int(x, z);
                     actualWeight = field.Fields[x, z].WeightForPlayer;
-                    potentialPos = field.Fields[x, z].Position;
                 }
             }
         }

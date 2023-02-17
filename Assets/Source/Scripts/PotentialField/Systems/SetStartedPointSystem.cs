@@ -29,40 +29,43 @@ public sealed class SetStartedPointSystem : UpdateSystem
                 ref var movementComponent = ref unit.GetComponent<PlayerUnitMovementComponent>();
                 ref var getMeFirst = ref unit.GetComponent<GetMeFirstPosition>();
                 movementComponent.OccupiedNode = GetNearestPosition(getMeFirst.Position, ref fieldComponent);
-                if (movementComponent.OccupiedNode == Vector2.left) continue;
+                if (movementComponent.OccupiedNode == Vector2Int.left) continue;
                 else
                 {
-                    movementComponent.Transform.position = fieldComponent.Fields[(int)movementComponent.OccupiedNode.x, (int)movementComponent.OccupiedNode.y].Position;
+                    movementComponent.Transform.position = fieldComponent.Fields[movementComponent.OccupiedNode.x, movementComponent.OccupiedNode.y].Position;
                     unit.RemoveComponent<GetMeFirstPosition>();
-                    unit.SetComponent(new UpdateField());
+                    unit.SetComponent(new UpdateField()
+                    {
+                        UpdateWithReset = false,
+                    });
                     unit.SetComponent(new UnitIsStay());
                 }
             }
         }
     }
-    Vector2 GetNearestPosition(Vector3 unitPosition, ref PlayField field)
+    Vector2Int GetNearestPosition(Vector3 unitPosition, ref PlayField field)
     {
         var clampedPosition = new Vector3(
             (float)Math.Round(unitPosition.x, 1, MidpointRounding.ToEven),
              field.FirstPoint.y,
             (float)Math.Round(unitPosition.z, 1, MidpointRounding.ToEven));
 
-        var posInArray = new Vector2(
+        var posInArray = new Vector2Int(
             Mathf.Clamp((int)(clampedPosition.x / (field.NodeRadius * 2)), 0, field.Fields.GetLength(0)),
             Mathf.Clamp((int)(clampedPosition.z / (field.NodeRadius * 2)), 0, field.Fields.GetLength(1))
             );
-        if (field.Fields[(int)posInArray.x, (int)posInArray.y].isAvailable)
+        if (field.Fields[posInArray.x, posInArray.y].isAvailable)
         {
             return posInArray;
         }
         else
         {
-            var xSize = field.Fields.GetLength(0);
-            var zSize = field.Fields.GetLength(1);
-            var xStart = Mathf.Clamp((int)posInArray.x - 1, 0, xSize);
-            var zStart = Mathf.Clamp((int)posInArray.y - 1, 0, zSize);
-            var xFinish = Mathf.Clamp((int)posInArray.x + 1, 0, xSize);
-            var zFinish = Mathf.Clamp((int)posInArray.y + 1, 0, zSize);
+            var xSize = field.Fields.GetLength(0)-1;
+            var zSize = field.Fields.GetLength(1)-1;
+            var xStart = Mathf.Clamp(posInArray.x - 1, 0, xSize);
+            var zStart = Mathf.Clamp(posInArray.y - 1, 0, zSize);
+            var xFinish = Mathf.Clamp(posInArray.x + 1, 0, xSize);
+            var zFinish = Mathf.Clamp(posInArray.y + 1, 0, zSize);
             while (true)
             {
                 for (int x = xStart; x <= xFinish; x++)
@@ -70,7 +73,7 @@ public sealed class SetStartedPointSystem : UpdateSystem
                     for (int z = zStart; z <= zFinish; z++)
                     {
                         if (field.Fields[x, z].isAvailable)
-                            return new Vector2(x, z);
+                            return new Vector2Int(x, z);
                     }
                 }
                 xStart = Mathf.Clamp(xStart - 1, 0, xSize);
