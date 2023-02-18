@@ -7,6 +7,7 @@ using System;
 using static UnityEditor.Progress;
 using System.ComponentModel;
 using UnityEditor.Experimental.GraphView;
+using static UnityEngine.Networking.UnityWebRequest;
 
 [Il2CppSetOption(Option.NullChecks, false)]
 [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
@@ -33,14 +34,10 @@ public sealed class UpdateFieldSystem : UpdateSystem
             foreach (var item in playerEntities)
             {
                 CalculateWeight(item, ref fieldComponent);
-                item.SetComponent(new UnitIsStay());
-                item.RemoveComponent<UpdateField>();
             }
             foreach (var item in enemyEntities)
             {
                 CalculateWeight(item, ref fieldComponent, true);
-                item.SetComponent(new UnitIsStay());
-                item.RemoveComponent<UpdateField>();
             }
             //Test
             var draw = this.World.Filter.With<FiledDrawerComponent>();
@@ -57,36 +54,65 @@ public sealed class UpdateFieldSystem : UpdateSystem
     {
         ref WeightComponent weightComponent = ref entity.GetComponent<WeightComponent>();
         ref var update = ref entity.GetComponent<UpdateField>();
+        ref var movementComponent = ref entity.GetComponent<PlayerUnitMovementComponent>();
         if (update.UpdateWithReset)
         {
-            ref var movementComponent = ref entity.GetComponent<PlayerUnitMovementComponent>();
             ResetWeight(ref weightComponent, ref fieldComponent);
-            movementComponent.OccupiedNode = movementComponent.NextNode;
         }
+        SetActiveCenter(movementComponent.OccupiedNode, ref fieldComponent, true);
         SetWeight(ref weightComponent, ref fieldComponent, isEnemy);
+        movementComponent.OccupiedNode = movementComponent.NextNode;
+        entity.RemoveComponent<UpdateField>();
     }
 
     void ResetWeight(ref WeightComponent weightComponent, ref PlayField fieldComponent)
     {
-        var center = GetCenter(weightComponent.Transform.position, ref fieldComponent);
-        fieldComponent.Fields[center.x, center.y].isAvailable = true;
+        if (weightComponent.IncreaseInfluenceArea == null || weightComponent.IncreaseInfluenceArea == null) return;
 
-        foreach (var item in weightComponent.InfluenceArea.Keys)
+        foreach (var item in weightComponent.IncreaseInfluenceArea.Keys)
         {
-            fieldComponent.Fields[item.x, item.y].WeightForPlayer = weightComponent.InfluenceArea[item].x;
-            fieldComponent.Fields[item.x, item.y].WeightForEnemy = weightComponent.InfluenceArea[item].y;
+            ref var node = ref fieldComponent.Fields[item.x, item.y];
+            node.WeightForPlayer -= weightComponent.IncreaseInfluenceArea[item].x;
+            node.WeightForEnemy -= weightComponent.IncreaseInfluenceArea[item].y;
         }
-        weightComponent.InfluenceArea.Clear();
+        foreach (var item in weightComponent.DecreaseInfluenceArea.Keys)
+        {
+            ref var node = ref fieldComponent.Fields[item.x, item.y];
+            node.WeightForPlayer += weightComponent.IncreaseInfluenceArea[item].x;
+            node.WeightForEnemy += weightComponent.IncreaseInfluenceArea[item].y;
+        }
+        weightComponent.IncreaseInfluenceArea.Clear();
+        weightComponent.DecreaseInfluenceArea.Clear();
     }
 
     void SetWeight(ref WeightComponent weightComponent, ref PlayField fieldComponent, bool isEnemy)
     {
         var center = GetCenter(weightComponent.Transform.position, ref fieldComponent);
 
-        fieldComponent.Fields[center.x, center.y].isAvailable = false;
+        SetActiveCenter(center, ref fieldComponent, false);
 
-        weightComponent.InfluenceArea = SetWeight(center, weightComponent.IncreaseWeightAndOffset, ref fieldComponent, false,  isEnemy);
-        SetWeight(center, weightComponent.DecreaseWeightAndOffset, ref fieldComponent, true, isEnemy);
+        weightComponent.IncreaseInfluenceArea = SetWeight(center, weightComponent.IncreaseWeightAndOffset, ref fieldComponent, false,  isEnemy);
+        weightComponent.DecreaseInfluenceArea = SetWeight(center, weightComponent.DecreaseWeightAndOffset, ref fieldComponent, true, isEnemy);
+    }
+
+    void SetActiveCenter(Vector2Int center, ref PlayField fieldComponent, bool enabled)
+    {
+        var xSize = fieldComponent.Fields.GetLength(0) - 1;
+        var zSize = fieldComponent.Fields.GetLength(1) - 1;
+        var xStart = Mathf.Clamp(center.x - 1, 0, xSize);
+        var zStart = Mathf.Clamp(center.y - 1, 0, zSize);
+        var xFinish = Mathf.Clamp(center.x + 1, 0, xSize);
+        var zFinish = Mathf.Clamp(center.y + 1, 0, zSize);
+        for (int x = xStart; x <= xFinish; x++)
+        {
+            for (int z = zStart; z <= zFinish; z++)
+            {
+                ref var node = ref fieldComponent.Fields[x, z];
+                
+                if(node.NodeType == FieldNodeType.Dynamic)
+                    node.isAvailable = enabled;
+            }
+        }
     }
 
     Dictionary<Vector2Int, Vector2Int> SetWeight(Vector2Int center, Vector2Int weightAndOffset, ref PlayField fieldComponent, bool isDecrease, bool isEnemy)
@@ -104,21 +130,22 @@ public sealed class UpdateFieldSystem : UpdateSystem
             {
                 ref var node = ref fieldComponent.Fields[x, z];
 
-                var influence = weightAndOffset.x / (Math.Abs(center.x - x + center.y - z) + 1);
-
-                result.Add(new Vector2Int(x, z), new Vector2Int(z, 0));
+                var influence = weightAndOffset.x / (Math.Abs(center.x - x) + Math.Abs(center.y - z) + 1);
 
                 if (isDecrease)
                 {
-                    node.WeightForEnemy += influence;
-                    node.WeightForPlayer += influence;
+                    result.Add(new Vector2Int(x, z), new Vector2Int(influence, influence));
+                    node.WeightForEnemy -= influence;
+                    node.WeightForPlayer -= influence;
                 }
                 else if (isEnemy)
                 {
+                    result.Add(new Vector2Int(x, z), new Vector2Int(influence, 0));
                     node.WeightForPlayer += influence;
                 }
                 else
                 {
+                    result.Add(new Vector2Int(x, z), new Vector2Int(0, influence));
                     node.WeightForEnemy += influence;
                 }
             }

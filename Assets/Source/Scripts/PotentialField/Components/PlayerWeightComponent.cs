@@ -13,5 +13,6 @@ public struct WeightComponent : IComponent
     public Vector2Int IncreaseWeightAndOffset;
     public Vector2Int DecreaseWeightAndOffset;
 
-    internal Dictionary<Vector2Int, Vector2Int> InfluenceArea;
+    internal Dictionary<Vector2Int, Vector2Int> IncreaseInfluenceArea;
+    internal Dictionary<Vector2Int, Vector2Int> DecreaseInfluenceArea;
 }

@@ -45,15 +45,6 @@ public sealed class СalculateWeight : Initializer
                     }
                 }
             }
-
-            //Test
-            var draw = this.World.Filter.With<FiledDrawerComponent>();
-
-            foreach (var item in draw)
-            {
-                ref var comp = ref item.GetComponent<FiledDrawerComponent>();
-                comp.Drawer.DrawNodes(fieldComponent.Fields);
-            }
         }
     }
 

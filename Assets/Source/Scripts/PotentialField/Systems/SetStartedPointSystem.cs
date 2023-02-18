@@ -3,7 +3,6 @@ using UnityEngine;
 using Unity.IL2CPP.CompilerServices;
 using Scellecs.Morpeh;
 using System;
-using System.Collections.Generic;
 
 [Il2CppSetOption(Option.NullChecks, false)]
 [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
@@ -33,12 +32,12 @@ public sealed class SetStartedPointSystem : UpdateSystem
                 else
                 {
                     movementComponent.Transform.position = fieldComponent.Fields[movementComponent.OccupiedNode.x, movementComponent.OccupiedNode.y].Position;
-                    unit.RemoveComponent<GetMeFirstPosition>();
+                    unit.SetComponent(new UnitIsStay());
                     unit.SetComponent(new UpdateField()
                     {
                         UpdateWithReset = false,
                     });
-                    unit.SetComponent(new UnitIsStay());
+                    unit.RemoveComponent<GetMeFirstPosition>();
                 }
             }
         }

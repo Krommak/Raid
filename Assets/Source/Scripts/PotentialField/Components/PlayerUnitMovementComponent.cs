@@ -11,7 +11,6 @@ public struct PlayerUnitMovementComponent : IComponent, IDisposable
 {
     public Transform Transform;
     public float Speed;
-    
     internal Vector3 TargetPosition;
     internal Vector2Int OccupiedNode;
     internal Vector2Int NextNode;

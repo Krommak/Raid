@@ -577,9 +577,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializedData:
-    TimeForRespawn: 0.15
+    TimeForRespawn: 0.6
     RespawnProgress: 0
-    UnitsCount: 100
+    UnitsCount: 10
     Position: {x: 4.1, y: 0.5, z: 5}
 --- !u!114 &116670029
 MonoBehaviour:
@@ -3364,11 +3364,11 @@ MonoBehaviour:
   - enabled: 1
     system: {fileID: 11400000, guid: 63707939f61773f4b91754c9f5702a53, type: 2}
   - enabled: 1
-    system: {fileID: 11400000, guid: a8b91d475c48d914499078f39f673d46, type: 2}
-  - enabled: 1
     system: {fileID: 11400000, guid: e424a7fcb8522b24f87e2ed4d9f7c531, type: 2}
   - enabled: 1
     system: {fileID: 11400000, guid: cba7d36c1795fc247ba4e62eb3c79312, type: 2}
+  - enabled: 1
+    system: {fileID: 11400000, guid: a8b91d475c48d914499078f39f673d46, type: 2}
   - enabled: 1
     system: {fileID: 11400000, guid: 466c101538ee33143a51d6c2db625eb6, type: 2}
   - enabled: 1
@@ -8827,7 +8827,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_BoundingSphereOverride: {x: 6.05e-43, y: 3.4022824e+25, z: 6.04e-43, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0

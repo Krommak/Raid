@@ -2,7 +2,6 @@ using Scellecs.Morpeh.Systems;
 using UnityEngine;
 using Unity.IL2CPP.CompilerServices;
 using Scellecs.Morpeh;
-using TMPro;
 
 [Il2CppSetOption(Option.NullChecks, false)]
 [Il2CppSetOption(Option.ArrayBoundsChecks, false)]
@@ -29,6 +28,7 @@ public sealed class UnitMovementSystem : UpdateSystem
             if ((movementComponent.Transform.position - movementComponent.TargetPosition).magnitude <= distanceToTargetForStop)
             {
                 movementComponent.Transform.position = movementComponent.TargetPosition;
+                unit.SetComponent(new UnitIsStay());
                 unit.SetComponent(new UpdateField()
                 {
                     UpdateWithReset = true,

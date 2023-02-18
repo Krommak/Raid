@@ -25,13 +25,14 @@ public sealed class PlayerUnitSetTargetSystem : UpdateSystem
         foreach (var field in playField)
         {
             ref var fieldComponent = ref field.GetComponent<PlayField>();
+
             foreach (var unit in playerUnits)
             {
                 ref var movementComponent = ref unit.GetComponent<PlayerUnitMovementComponent>();
-                var decreaseOffset = unit.GetComponent<WeightComponent>().DecreaseWeightAndOffset.y;
-                if (movementComponent.OccupiedNode == Vector2.left)
-                    continue;
-                var nextNode = GetNextPosition(movementComponent.OccupiedNode, ref fieldComponent, decreaseOffset);
+                ref var weightComponent = ref unit.GetComponent<WeightComponent>();
+
+                var nextNode = GetNextPosition(movementComponent.OccupiedNode, ref fieldComponent, ref weightComponent, unit.Has<UnitInBattle>());
+
                 if (nextNode != movementComponent.OccupiedNode)
                 {
                     movementComponent.NextNode = nextNode;
@@ -42,33 +43,42 @@ public sealed class PlayerUnitSetTargetSystem : UpdateSystem
         }
     }
 
-    Vector2Int GetNextPosition(Vector2Int unitPosition, ref PlayField field, int decreaseOffset)
+    Vector2Int GetNextPosition(Vector2Int unitPosition, ref PlayField field, ref WeightComponent weight, bool unitInBattle)
     {
         var potentialPos = unitPosition;
-
-        var actualWeight = field.Fields[unitPosition.x, unitPosition.y].WeightForPlayer;
+        var decreaseOffset = weight.DecreaseWeightAndOffset.y;
+        var actualWeight = field.Fields[unitPosition.x, unitPosition.y].WeightForPlayer - weight.DecreaseWeightAndOffset.x;
 
         var xSize = field.Fields.GetLength(0) - 1;
         var zSize = field.Fields.GetLength(1) - 1;
 
         var firstX = Mathf.Clamp(unitPosition.x, 0, xSize);
-        var firstZ = Mathf.Clamp(unitPosition.y + decreaseOffset+1, 0, zSize);
-
+        var firstZ = Mathf.Clamp(unitPosition.y + decreaseOffset + 2, 0, zSize);
+        ref var node = ref field.Fields[firstX, firstZ];
+        if (node.isAvailable && actualWeight < node.WeightForPlayer)
+        {
+            potentialPos = new Vector2Int(firstX, firstZ);
+            actualWeight = node.WeightForPlayer;
+        }
         for (int x = 0; x <= decreaseOffset + 1; x++)
         {
             var posFirst = Mathf.Clamp(firstX + x, 0, xSize);
-            if (field.Fields[posFirst, firstZ].isAvailable && actualWeight < field.Fields[posFirst, firstZ].WeightForPlayer)
+            node = ref field.Fields[posFirst, firstZ];
+            if (node.isAvailable && actualWeight < node.WeightForPlayer)
             {
                 potentialPos = new Vector2Int(posFirst, firstZ);
-                actualWeight = field.Fields[posFirst, firstZ].WeightForPlayer;
+                actualWeight = node.WeightForPlayer;
             }
             var posSecond = Mathf.Clamp(firstX - x, 0, xSize);
-            if (field.Fields[posSecond, firstZ].isAvailable && actualWeight < field.Fields[posSecond, firstZ].WeightForPlayer)
+            node = ref field.Fields[posSecond, firstZ];
+            if (node.isAvailable && actualWeight < node.WeightForPlayer)
             {
                 potentialPos = new Vector2Int(posSecond, firstZ);
-                actualWeight = field.Fields[posSecond, firstZ].WeightForPlayer;
+                actualWeight = node.WeightForPlayer;
             }
         }
+        
+        if(!unitInBattle) return potentialPos;
 
         firstX = Mathf.Clamp(unitPosition.x - (decreaseOffset + 1), 0, xSize);
         firstZ = Mathf.Clamp(unitPosition.y - (decreaseOffset + 1), 0, zSize);
@@ -79,10 +89,11 @@ public sealed class PlayerUnitSetTargetSystem : UpdateSystem
         {
             for (int x = firstX; x <= finalX; x++)
             {
-                if (field.Fields[x, z].isAvailable && actualWeight < field.Fields[x, z].WeightForPlayer)
+                node = ref field.Fields[x, z];
+                if (node.isAvailable && actualWeight < node.WeightForPlayer)
                 {
                     potentialPos = new Vector2Int(x, z);
-                    actualWeight = field.Fields[x, z].WeightForPlayer;
+                    actualWeight = node.WeightForPlayer;
                 }
             }
         }

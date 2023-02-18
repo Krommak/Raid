@@ -40,6 +40,7 @@ public sealed class InitFields : Initializer
                 bool available = !Physics.CheckSphere(pos, nodeRadius, grassMask);
                 ref var node = ref component.Fields[x, z];
                 node.Position = pos;
+                node.NodeType = available ? FieldNodeType.Dynamic : FieldNodeType.Static;
                 node.isAvailable = available;
                 actualX += nodeRadius * 2;
             }

@@ -186,7 +186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   serializedData:
     Transform: {fileID: 7560040556058657056}
-    Speed: 2
+    Speed: 3
 --- !u!114 &5628975669134050037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,7 +202,7 @@ MonoBehaviour:
   serializedData:
     Transform: {fileID: 7560040556058657056}
     IncreaseWeightAndOffset: {x: 200, y: 5}
-    DecreaseWeightAndOffset: {x: -250, y: 1}
+    DecreaseWeightAndOffset: {x: 300, y: 1}
 --- !u!1001 &2658698878629374721
 PrefabInstance:
   m_ObjectHideFlags: 0
