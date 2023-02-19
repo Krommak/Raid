@@ -35,17 +35,12 @@ public sealed class UnitAnimationSystem : UpdateSystem
 
             var state = trigger.State;
 
-            if (state == animator.CurrentState || animator.Animator == null) continue;
+            item.RemoveComponent<AnimTriggerComponent>();
+
+            if (state == animator.CurrentState) continue;
 
             animator.Animator.Play(state.ToString());
             animator.CurrentState = state;
-
-            item.RemoveComponent<AnimTriggerComponent>();
-            if (state != UnitAnimationState.StandingIdle)
-                item.SetComponent(new AnimTriggerComponent()
-                {
-                    State = UnitAnimationState.StandingIdle,
-                });
         }
     }
 }

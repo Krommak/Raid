@@ -22,8 +22,14 @@ public sealed class UnitMovementSystem : UpdateSystem
         foreach (var item in entities)
         {
             var rb = item.GetComponent<RotateUnitComponent>().Rigidbody;
-            if (rb.velocity.z < velocityForIdle) continue;
-
+            if (rb.velocity.z < velocityForIdle)
+            {
+                item.SetComponent(new AnimTriggerComponent()
+                {
+                    State = UnitAnimationState.StandingIdle,
+                });
+                continue;
+            }
             item.SetComponent(new AnimTriggerComponent()
             {
                 State = UnitAnimationState.StandingRunForward,
