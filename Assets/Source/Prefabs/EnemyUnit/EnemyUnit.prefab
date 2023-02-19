@@ -201,6 +201,14 @@ PrefabInstance:
       propertyPath: m_WarningMessage
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 3453269697801914296, guid: 2d43360582c4a944991263878b9fedae, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3746306189194377188, guid: 2d43360582c4a944991263878b9fedae, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3746306189194377188, guid: 2d43360582c4a944991263878b9fedae, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.49907413
@@ -293,11 +301,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5529689496831532773, guid: 2d43360582c4a944991263878b9fedae, type: 3}
   m_PrefabInstance: {fileID: 3348988036597064788}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &6712390909908619680 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8313307465752819188, guid: 2d43360582c4a944991263878b9fedae, type: 3}
-  m_PrefabInstance: {fileID: 3348988036597064788}
-  m_PrefabAsset: {fileID: 0}
 --- !u!23 &1942847317952523777
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -317,7 +320,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 501f08291ed79a94a9c20d02315e8897, type: 2}
+  - {fileID: -1699170139923519109, guid: 8ae6930dffd687b46bcc8d32c1d0d2ec, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -374,7 +377,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 416502, guid: a3c24a5ae068ed44d950af671f99cc21, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 416502, guid: a3c24a5ae068ed44d950af671f99cc21, type: 3}
       propertyPath: m_LocalScale.x
@@ -456,7 +459,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 6712390909908619680}
+    m_TransformParent: {fileID: 7116982279036779185}
     m_Modifications:
     - target: {fileID: 32259762596947121, guid: 8c18a4f330cb68d429ec1f4541c700df, type: 3}
       propertyPath: m_RootOrder
